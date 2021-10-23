@@ -7,12 +7,9 @@
 #include <dirent.h>
 #include <stdbool.h>
 
-struct userCommand {
+struct bgProcess {
 
-    char* command;
-    char** args;
-    int argcounter;
-    char* fileinput;
-    char* fileoutput;
-    _Bool fg;
+    pid_t processID;
+    pid_t parProcessID;
+    struct bgProcess *next;
 };
