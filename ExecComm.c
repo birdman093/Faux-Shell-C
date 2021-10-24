@@ -12,11 +12,12 @@
 #include "BGProcesses.h"
 
 #define INV -5
+#define DEFAULT_BG_REDIR "/dev/null"
 
 int inputRedirection(char*, int, int*);
 int outputRedirection(char*, int, int*);
 
-int execComm(struct bgProcess* bgProcessHead, struct userCommand* currCommand, int* exitStatus) {
+int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, int* exitStatus) {
     pid_t newProcess = -5;
     int childStatus;
     newProcess = fork();
@@ -32,14 +33,20 @@ int execComm(struct bgProcess* bgProcessHead, struct userCommand* currCommand, i
             exit(EXIT_FAILURE);
         }
 
-        // Input and Output redirection based on command, returns -1 on bad result
+        // Input and Output redirection based on command, if process is a background process
+        // then it is redirected to /dev/null,  returns -1 on bad result
         int fd_OutResult = 0;
         int fd_InResult = 0;
         if (currCommand->fileoutput != NULL) {
             fd_OutResult = outputRedirection(currCommand->fileoutput, 1, exitStatus);
+        } else if (currCommand->fg == false) {
+            fd_OutResult = outputRedirection(DEFAULT_BG_REDIR, 1, exitStatus);
         }
+
         if (currCommand->fileinput != NULL) {
             fd_InResult = inputRedirection(currCommand->fileinput, 0, exitStatus);
+        } else if (currCommand->fg == false) {
+            fd_InResult = inputRedirection(DEFAULT_BG_REDIR, 0, exitStatus);
         }
         if (fd_OutResult == -1 || fd_InResult == -1) {
             exit(EXIT_FAILURE);
@@ -75,14 +82,25 @@ int execComm(struct bgProcess* bgProcessHead, struct userCommand* currCommand, i
                     return 1;
                 }
             } else {
-                // terminated abnormally
                 printf("This terminated abnormally: %d\n", WTERMSIG(childStatus));
                 return -1;
             }
             
         } else {
-            //background process things
-            printf("I AM BACKGROUND");
+            // add process to bgProcesses by making it the head and display on printf
+            struct bgProcess* currBG = malloc(sizeof(struct bgProcess));
+            currBG->processID = newProcess;
+            currBG->parProcessID = getpid();
+            
+            if (*bgProcessHead == NULL) {
+                currBG->next = NULL;
+            } else {
+                struct bgProcess* bgProcessTmp = *bgProcessHead;
+                currBG->next = bgProcessTmp;
+            }
+            *bgProcessHead = currBG;
+            printf("Background pid is %d\n", newProcess);
+
             return 1;
         }
     }

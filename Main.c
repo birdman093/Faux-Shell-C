@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 #include "UserCommand.h"
 #include "BGProcesses.h"
 
@@ -24,7 +25,8 @@ char* dollarSign(char *);
 void exitPreSet(struct bgProcess*);
 void cdPreSet(char**, int);
 void statusPreSet(bool, int, int);
-int execComm(struct bgProcess*, struct userCommand*, int*);
+int execComm(struct bgProcess**, struct userCommand*, int*);
+void checkBgTerm(struct bgProcess**, int*);
 
 int main(void) {
 
@@ -36,6 +38,11 @@ int main(void) {
     
 
     while(1) {
+        //Check if any background processes have terminated
+        if (bgProcessHead != NULL) {
+            checkBgTerm(&bgProcessHead, &exitStatus);
+        }
+
         //Prompt User for command
         char* userInput = calloc(MAXINPUTCOMM, sizeof(char));
         printf("\n: ");
@@ -121,7 +128,7 @@ int main(void) {
             statusPreSet(firstProcess, exitStatus, lastTerminate);
         } else {
             // create new process in exec, and check if this is first foreground process
-            int fgCheck = execComm(bgProcessHead, currCommand, &exitStatus);
+            int fgCheck = execComm(&bgProcessHead, currCommand, &exitStatus);
             if (firstProcess == false && currCommand->fg && fgCheck != -1) {
                 firstProcess = true;
             }
