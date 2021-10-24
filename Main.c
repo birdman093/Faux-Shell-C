@@ -6,10 +6,11 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <dirent.h>
+#include <fcntl.h>
 #include "UserCommand.h"
 #include "BGProcesses.h"
 
-#define maxinput 2049
+#define MAXINPUTCOMM 2049  // 2048 characters, 1 NULL termination
 #define hashtag '#'
 #define input '<'
 #define output '>'
@@ -36,9 +37,9 @@ int main(void) {
 
     while(1) {
         //Prompt User for command
-        char* userInput = calloc(maxinput, sizeof(char));
+        char* userInput = calloc(MAXINPUTCOMM, sizeof(char));
         printf("\n: ");
-        fgets(userInput, maxinput, stdin);
+        fgets(userInput, MAXINPUTCOMM, stdin);
 
         //Break first input into tokens, check for valid input (i.e. no input, or # comment character)
         char* token = strtok_r(userInput," \n\r",&userInput);
@@ -96,7 +97,7 @@ int main(void) {
             if (currCommand->fg == false) {
                 break;
             }
-            token = strtok_r(NULL,"  \n\r",&userInput);
+            token = strtok_r(NULL," \n\r",&userInput);
         }
         currCommand->args[argCounter] = NULL;
 

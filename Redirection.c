@@ -28,7 +28,7 @@ int inputRedirection(char* newInput, int oldInput, int* exitStatus) {
 }
 
 int outputRedirection(char* newOutput, int oldOutput, int* exitStatus) {
-    int fd_Out = open(newOutput, O_WRONLY | O_CREAT | O_TRUNC, 0660);
+    int fd_Out = open(newOutput, O_WRONLY | O_CREAT | O_TRUNC, 0666);
     if (fd_Out == -1) {
         printf("Error Opening/Creating Output Redirection: %s", newOutput);
         *exitStatus = 1;
