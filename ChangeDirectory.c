@@ -15,7 +15,7 @@ void cdPreSet(char** args, int argCounter) {
     int directChange;
 
     //check argument length is exactly one
-    if (argCounter > 1) {
+    if (argCounter > 2) {
         printf("Error on Input: Too many arguments");
         return;
     }
@@ -33,9 +33,9 @@ void cdPreSet(char** args, int argCounter) {
             printf("%s: Error updating to HOME directory", homeDir);
         } 
     } else {
-        directChange = chdir(args[0]);
+        directChange = chdir(args[1]);
         if (directChange == -1) {
-            printf("%s: No such file or directory", args[0]);
+            printf("%s: No such file or directory", args[1]);
         }
     }
 }

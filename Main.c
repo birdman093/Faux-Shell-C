@@ -17,12 +17,13 @@
 #define EXITPRESET "exit"
 #define CDPRESET "cd"
 #define STATUSPRESET "status"
+#define MAXARGS 514   // accounts for max 512 arguments, 1 command, 1 NULL termination
 
 char* dollarSign(char *);
 void exitPreSet(struct bgProcess*);
 void cdPreSet(char**, int);
 void statusPreSet(bool, int, int);
-int execComm(struct bgProcess*, struct userCommand*);
+int execComm(struct bgProcess*, struct userCommand*, int*);
 
 int main(void) {
 
@@ -48,21 +49,25 @@ int main(void) {
         if (hashtag == firstChar) {
             continue;
         }
-        // allocate and initialize elements of command struct, modify command based on $$ expansion
-        struct userCommand* currCommand = malloc(sizeof(struct userCommand));  
-        printf("PreDollar: %s", token);
+        // allocate and initialize command for userCommand struct, modify command based on $$ expansion
+        struct userCommand* currCommand = malloc(sizeof(struct userCommand));  ;
         char* modToken = dollarSign(token);
-        printf("AfterDollar: %s", userInput);
         currCommand->command = calloc(strlen(modToken)+1, sizeof(char));
         strcpy(currCommand->command, modToken);
-        currCommand->args = calloc(512, sizeof(char*));
-        currCommand->argcounter = 0;
+        
+        // initialize first argument as command
+        currCommand->args = calloc(MAXARGS, sizeof(char*));
+        currCommand->args[0] = calloc(strlen(modToken)+1, sizeof(char));
+        strcpy(currCommand->args[0], modToken);
+
+        // initialize rest of command
+        currCommand->argcounter = 1;
         currCommand->fileinput = NULL;
         currCommand->fileoutput = NULL;
         currCommand->fg = true;
 
         // iterate through each item based on spaces, and place into command struct
-        int argCounter = 0;
+        int argCounter = 1;
         token = strtok_r(NULL," \n\r",&userInput);
         while (token != NULL) {
             modToken = dollarSign(token);
@@ -93,10 +98,12 @@ int main(void) {
             }
             token = strtok_r(NULL,"  \n\r",&userInput);
         }
+        currCommand->args[argCounter] = NULL;
+
         // for testing purposes only
         printf("Command: %s \nfileInput: %s \nfileOutput: %s \nbackground: %d\n", currCommand->command, currCommand->fileoutput, currCommand->fileinput, currCommand->fg);
         int counter = 0;
-        while(currCommand->args[counter] != 0) {
+        while(currCommand->args[counter] != NULL) {
             printf("arg: %s\n", currCommand->args[counter]);
             counter++;
         }
@@ -113,11 +120,10 @@ int main(void) {
             statusPreSet(firstProcess, exitStatus, lastTerminate);
         } else {
             // create new process in exec, and check if this is first foreground process
-            int fgCheck = execComm(bgProcessHead, currCommand);
+            int fgCheck = execComm(bgProcessHead, currCommand, &exitStatus);
             if (firstProcess == false && currCommand->fg && fgCheck != -1) {
                 firstProcess = true;
             }
-
         }
         
         // Q: do we need to free each item in struct???
