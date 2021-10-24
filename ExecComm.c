@@ -12,17 +12,34 @@
 
 #define INV -5
 
+int inputRedirection(char*, int, int*);
+int outputRedirection(char*, int, int*);
+
 int execComm(struct bgProcess* bgProcessHead, struct userCommand* currCommand, int* exitStatus) {
     pid_t newProcess = -5;
     int childStatus;
     newProcess = fork();
     if (newProcess == -1) {
+        // Error in process creation
         printf("Invalid Fork--New Process did not fork\n");
+        return -1;
     } else if (newProcess == 0) {
         // Child process
 
-        //call execvp, which searches PATH environment to find command, if exec
-        // is successful return 0 other return INV
+        // Input and Output redirection based on command, returns -1 on bad result
+        int fd_OutResult = 0;
+        int fd_InResult = 0;
+        if (currCommand->fileoutput) {
+            fd_OutResult = outputRedirection(currCommand->fileoutput, 1, exitStatus);
+        }
+        if (currCommand->fileinput) {
+            fd_InResult = inputRedirection(currCommand->fileinput, 0, exitStatus);
+        }
+        if (fd_OutResult == -1 || fd_InResult == -1) {
+            return -1;
+        }
+
+        // Search PATH environment to find command, exit based on status of search
         int execResult = execvp(currCommand->args[0],currCommand->args);
         if (execResult == -1) {
             exit(EXIT_FAILURE);
@@ -35,25 +52,25 @@ int execComm(struct bgProcess* bgProcessHead, struct userCommand* currCommand, i
         // otherwise do not wait
         if (currCommand->fg) {
             pid_t childResponse = waitpid(newProcess, &childStatus, 0);
-            pid_t parID = getpid();
-
+            printf("TESTING ONLY: Child Process created and returned: %d\n", childResponse);
             // terminated normally-- this may not get used
             if (WIFEXITED(childStatus)) {
-                printf("\nThis terminated normally: %d\n", WEXITSTATUS(childStatus));
                 if (WEXITSTATUS(childStatus) == EXIT_FAILURE) {
                     *exitStatus = 1;
+                    return -1;
+                } else {
+                    return 1;
                 }
             } else {
                 // terminated abnormally
                 printf("This terminated abnormally: %d\n", WTERMSIG(childStatus));
+                return -1;
             }
             
-            printf("ChildStatus: %d\n", WEXITSTATUS(childStatus));
-            printf("ChildID %d\nParentID: %d\n",childResponse, parID);
         } else {
             //background process things
             printf("I AM BACKGROUND");
+            return 1;
         }
     }
-    return -1;
 }
