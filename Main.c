@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <signal.h>
 #include "UserCommand.h"
 #include "BGProcesses.h"
 
@@ -27,6 +28,7 @@ void cdPreSet(char**, int);
 void statusPreSet(bool, int, int);
 int execComm(struct bgProcess**, struct userCommand*, int*);
 void checkBgTerm(struct bgProcess**, int*);
+void signalShell(void);
 
 int main(void) {
 
@@ -35,6 +37,7 @@ int main(void) {
     int lastTerminate = -1;
     struct bgProcess* bgProcessHead = NULL; //malloc(sizeof(struct bgProcess));
     bool firstProcess = false;  // tracks whether first foreground process other than built-ins has run yet
+    signalShell();
     
 
     while(1) {

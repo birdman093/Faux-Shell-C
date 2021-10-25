@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <signal.h>
 #include "UserCommand.h"
 #include "BGProcesses.h"
 
@@ -16,6 +17,8 @@
 
 int inputRedirection(char*, int, int*);
 int outputRedirection(char*, int, int*);
+void signal_SIGINT_fg_update(void);
+void signal_SIGINT_bg_update(void);
 
 int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, int* exitStatus) {
     pid_t newProcess = -5;
@@ -28,11 +31,6 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
     } else if (newProcess == 0) {
         // Child process
 
-        // Validate command before input and output redirection
-        if (strcmp(currCommand->command, "yada")==0) {
-            exit(EXIT_FAILURE);
-        }
-
         // Input and Output redirection based on command, if process is a background process
         // then it is redirected to /dev/null,  returns -1 on bad result
         int fd_OutResult = 0;
@@ -42,7 +40,6 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
         } else if (currCommand->fg == false) {
             fd_OutResult = outputRedirection(DEFAULT_BG_REDIR, 1, exitStatus);
         }
-
         if (currCommand->fileinput != NULL) {
             fd_InResult = inputRedirection(currCommand->fileinput, 0, exitStatus);
         } else if (currCommand->fg == false) {
@@ -52,7 +49,14 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
             exit(EXIT_FAILURE);
         }
 
-        // Search PATH environment to find command, exit based on status of search
+        //assign new SIGINT handler based on fg or bg
+        if (currCommand->fg == true) {
+            signal_SIGINT_fg_update();
+        } else {
+            signal_SIGINT_bg_update();
+        }
+
+        // Search PATH environment to find command, exit based on status of search 
         int execResult = execvp(currCommand->args[0],currCommand->args);
         if (execResult == -1) {
             if (currCommand->fileoutput != NULL) {
@@ -82,7 +86,7 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
                     return 1;
                 }
             } else {
-                printf("This terminated abnormally: %d\n", WTERMSIG(childStatus));
+                printf("NOT AT HANDLER: This terminated abnormally, killed by Signal %d\n", WTERMSIG(childStatus));
                 return -1;
             }
             
