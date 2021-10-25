@@ -86,7 +86,7 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
                     return 1;
                 }
             } else {
-                printf("NOT AT HANDLER: This terminated abnormally, killed by Signal %d\n", WTERMSIG(childStatus));
+                printf("This terminated abnormally, killed by Signal %d\n", WTERMSIG(childStatus));
                 return -1;
             }
             

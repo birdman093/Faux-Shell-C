@@ -64,6 +64,9 @@ void checkBgTerm(struct bgProcess* bgProcessHead, int* exitStatus); function che
 processes have terminated by iterating through linked list.  If any background processes have terminated then
 CheckBgTerm prints to terminal the name of the process and the id
 
+--------
+SignalShell.c
+
 ---------
 UserCommand.h
 struct: userCommand; which contains char* command, char** args, char* fileinput,
