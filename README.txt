@@ -66,6 +66,13 @@ CheckBgTerm prints to terminal the name of the process and the id
 
 --------
 SignalShell.c
+void handle_SIGTSTP_shell(int signo);
+
+void signalShell(void);
+
+void signal_SIGINT_fg_update(void);
+
+void signal_SIGINT_bg_update(void);
 
 ---------
 UserCommand.h

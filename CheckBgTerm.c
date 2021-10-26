@@ -18,6 +18,7 @@ void checkBgTerm(struct bgProcess** bgProcessHead, int* exitStatus) {
     struct bgProcess* currBgProcess = *bgProcessHead;
     int bgStatus;
     int bgResult;
+    int lastTerminate;
 
     while(currBgProcess != NULL) {
 
@@ -25,6 +26,19 @@ void checkBgTerm(struct bgProcess** bgProcessHead, int* exitStatus) {
         // checking time!
         if (bgResult != 0) {
             printf("background pid %d is done: exit value %d\n", currBgProcess->processID, *exitStatus);
+            //update last terminate
+            if (WIFEXITED(bgStatus)) {
+                if (WEXITSTATUS(bgStatus) == EXIT_FAILURE) {
+                    *exitStatus = 1;
+                    printf("background pid %d is done: exit value %d\n", currBgProcess->processID, *exitStatus);
+                } else {
+                    printf("background pid %d is done: exit value %d\n", currBgProcess->processID, *exitStatus);
+                }
+            } else {
+                lastTerminate = WTERMSIG(bgStatus);
+                printf("background pid %d is done: terminated by signal %d\n", currBgProcess->processID, lastTerminate);
+            }
+
             if (prevBgProcess == NULL) {
                 //head of list needs to be updated
                 *bgProcessHead = currBgProcess->next;
@@ -36,6 +50,7 @@ void checkBgTerm(struct bgProcess** bgProcessHead, int* exitStatus) {
                 //free(currBgProcess);
                 currBgProcess = prevBgProcess->next;
             }
+
         } else {
             prevBgProcess = currBgProcess;
             currBgProcess = currBgProcess->next;

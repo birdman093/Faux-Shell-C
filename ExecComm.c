@@ -19,6 +19,7 @@ int inputRedirection(char*, int, int*);
 int outputRedirection(char*, int, int*);
 void signal_SIGINT_fg_update(void);
 void signal_SIGINT_bg_update(void);
+int lastTerminate;
 
 int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, int* exitStatus) {
     pid_t newProcess = -5;
@@ -74,8 +75,10 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
         // Parent process, if foreground wait for child process to finish, 
         // otherwise do not wait
         if (currCommand->fg) {
-            pid_t childResponse = waitpid(newProcess, &childStatus, 0);
-            // terminated normally-- this may not get used
+            pid_t childResponse;
+            while((childResponse = waitpid(newProcess, &childStatus, 0)) != newProcess) {}
+                // terminated normally-- this may not get used
+
             if (WIFEXITED(childStatus)) {
                 if (WEXITSTATUS(childStatus) == EXIT_FAILURE) {
                     *exitStatus = 1;
@@ -86,9 +89,11 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
                     return 1;
                 }
             } else {
+                lastTerminate = WTERMSIG(childStatus);
                 printf("This terminated abnormally, killed by Signal %d\n", WTERMSIG(childStatus));
                 return -1;
             }
+
             
         } else {
             // add process to bgProcesses by making it the head and display on printf

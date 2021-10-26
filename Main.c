@@ -29,6 +29,8 @@ void statusPreSet(bool, int, int);
 int execComm(struct bgProcess**, struct userCommand*, int*);
 void checkBgTerm(struct bgProcess**, int*);
 void signalShell(void);
+bool global_Background;
+int lastTerminate;
 
 int main(void) {
 
@@ -38,7 +40,7 @@ int main(void) {
     struct bgProcess* bgProcessHead = NULL; //malloc(sizeof(struct bgProcess));
     bool firstProcess = false;  // tracks whether first foreground process other than built-ins has run yet
     signalShell();
-    
+    global_Background = true;
 
     while(1) {
         //Check if any background processes have terminated
@@ -110,6 +112,11 @@ int main(void) {
             token = strtok_r(NULL," \n\r",&userInput);
         }
         currCommand->args[argCounter] = NULL;
+
+        // set foreground/background status based on global variable
+        if (currCommand->fg == true && global_Background == false) {
+            currCommand->fg = false;
+        }
 
         // for testing purposes only
         printf("Command: %s \nfileInput: %s \nfileOutput: %s \nbackground: %d\n", currCommand->command, currCommand->fileoutput, currCommand->fileinput, currCommand->fg);
