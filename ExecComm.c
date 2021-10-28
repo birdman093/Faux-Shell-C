@@ -14,14 +14,16 @@
 
 #define INV -5
 #define DEFAULT_BG_REDIR "/dev/null"
+#define EXIT_FAILURE_INPUT 11
+#define EXIT_FAILURE_OUTPUT 12
+#define EXIT_FAILURE_COMMAND 13
 
-int inputRedirection(char*, int, int*);
-int outputRedirection(char*, int, int*);
+int inputRedirection(char*, int);
+int outputRedirection(char*, int);
 void signal_SIGINT_fg_update(void);
 void signal_SIGINT_bg_update(void);
-int lastTerminate;
 
-int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, int* exitStatus) {
+int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, int* exitStatus, int* lastTerminate) {
     pid_t newProcess = -5;
     int childStatus;
     newProcess = fork();
@@ -36,18 +38,24 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
         // then it is redirected to /dev/null,  returns -1 on bad result
         int fd_OutResult = 0;
         int fd_InResult = 0;
-        if (currCommand->fileoutput != NULL) {
-            fd_OutResult = outputRedirection(currCommand->fileoutput, 1, exitStatus);
-        } else if (currCommand->fg == false) {
-            fd_OutResult = outputRedirection(DEFAULT_BG_REDIR, 1, exitStatus);
-        }
+
         if (currCommand->fileinput != NULL) {
-            fd_InResult = inputRedirection(currCommand->fileinput, 0, exitStatus);
+            fd_InResult = inputRedirection(currCommand->fileinput, 0);
         } else if (currCommand->fg == false) {
-            fd_InResult = inputRedirection(DEFAULT_BG_REDIR, 0, exitStatus);
+            fd_InResult = inputRedirection(DEFAULT_BG_REDIR, 0);
         }
-        if (fd_OutResult == -1 || fd_InResult == -1) {
-            exit(EXIT_FAILURE);
+        if (fd_InResult == -1) {
+            exit(EXIT_FAILURE_INPUT);
+        }
+
+        if (currCommand->fileoutput != NULL) {
+            fd_OutResult = outputRedirection(currCommand->fileoutput, 1);
+        } else if (currCommand->fg == false) {
+            fd_OutResult = outputRedirection(DEFAULT_BG_REDIR, 1);
+        }
+
+        if (fd_OutResult == -1) {
+            exit(EXIT_FAILURE_OUTPUT);
         }
 
         //assign new SIGINT handler based on fg or bg
@@ -66,7 +74,7 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
             if (currCommand->fileinput != NULL) {
                 close(fd_InResult);
             }
-            exit(EXIT_FAILURE);
+            exit(EXIT_FAILURE_COMMAND);
         } else {
             exit(EXIT_SUCCESS); 
         }
@@ -77,20 +85,34 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
         if (currCommand->fg) {
             pid_t childResponse;
             while((childResponse = waitpid(newProcess, &childStatus, 0)) != newProcess) {}
-                // terminated normally-- this may not get used
 
             if (WIFEXITED(childStatus)) {
-                if (WEXITSTATUS(childStatus) == EXIT_FAILURE) {
+                
+                if (WEXITSTATUS(childStatus) == EXIT_FAILURE_COMMAND) {
                     *exitStatus = 1;
-                    printf("TESTINGONLY: Invalid Command, %d\n", childResponse);
+                    printf("%s, is an Invalid File/ Command\n", currCommand->command);
                     return -1;
-                } else {
+                } else if (WEXITSTATUS(childStatus) == EXIT_FAILURE_INPUT) {
+                    *exitStatus = 1;
+                    printf("Error Opening Input File, %s, for Input Redirection", currCommand->fileinput);
+                    return -1;
+                } else if (WEXITSTATUS(childStatus) == EXIT_FAILURE_OUTPUT) {
+                    *exitStatus = 1;
+                    printf("Error Opening Output File, %s, for Output Redirection", currCommand->fileinput);
+                    return -1;
+                } else if (WEXITSTATUS(childStatus) == EXIT_FAILURE) {
+                    *exitStatus = 1;
+                    return -1;
+                }
+                else {
                     printf("TESTINGONLY: Valid Command, %d\n", childResponse);
+                    *exitStatus = 0;
                     return 1;
                 }
             } else {
-                lastTerminate = WTERMSIG(childStatus);
-                printf("This terminated abnormally, killed by Signal %d\n", WTERMSIG(childStatus));
+                *exitStatus = 1;
+                *lastTerminate = WTERMSIG(childStatus);
+                printf("Terminated by Signal %d\n", WTERMSIG(childStatus));
                 return -1;
             }
 

@@ -11,32 +11,36 @@
 #include "UserCommand.h"
 #include "BGProcesses.h"
 
-void checkBgTerm(struct bgProcess** bgProcessHead, int* exitStatus) {
+#define EXIT_FAILURE_INPUT 11
+#define EXIT_FAILURE_OUTPUT 12
+#define EXIT_FAILURE_COMMAND 13
+
+void checkBgTerm(struct bgProcess** bgProcessHead) {
 
     // Iterate through bgProcesses linked list and see if any background processes have terminated
     struct bgProcess* prevBgProcess = NULL;
     struct bgProcess* currBgProcess = *bgProcessHead;
     int bgStatus;
     int bgResult;
-    int lastTerminate;
+    int bgExitStatus = 0;
+    int bgLastTerminate = -1;
 
     while(currBgProcess != NULL) {
 
         bgResult = waitpid(currBgProcess->processID, &bgStatus, WNOHANG);
         // checking time!
         if (bgResult != 0) {
-            printf("background pid %d is done: exit value %d\n", currBgProcess->processID, *exitStatus);
             //update last terminate
             if (WIFEXITED(bgStatus)) {
-                if (WEXITSTATUS(bgStatus) == EXIT_FAILURE) {
-                    *exitStatus = 1;
-                    printf("background pid %d is done: exit value %d\n", currBgProcess->processID, *exitStatus);
+                if (WEXITSTATUS(bgStatus) == EXIT_FAILURE_COMMAND || WEXITSTATUS(bgStatus) == EXIT_FAILURE_INPUT || WEXITSTATUS(bgStatus) == EXIT_FAILURE_OUTPUT) {
+                    bgExitStatus = 1;
                 } else {
-                    printf("background pid %d is done: exit value %d\n", currBgProcess->processID, *exitStatus);
+                    bgExitStatus = 0;
                 }
+                printf("background pid %d is done: exit value %d\n", currBgProcess->processID, bgExitStatus);
             } else {
-                lastTerminate = WTERMSIG(bgStatus);
-                printf("background pid %d is done: terminated by signal %d\n", currBgProcess->processID, lastTerminate);
+                bgLastTerminate = WTERMSIG(bgStatus);
+                printf("background pid %d is done: terminated by signal %d\n", currBgProcess->processID, bgLastTerminate);
             }
 
             if (prevBgProcess == NULL) {

@@ -24,28 +24,27 @@
 
 char* dollarSign(char *);
 void exitPreSet(struct bgProcess*);
-void cdPreSet(char**, int);
+void cdPreSet(char**, int, int*);
 void statusPreSet(bool, int, int);
-int execComm(struct bgProcess**, struct userCommand*, int*);
-void checkBgTerm(struct bgProcess**, int*);
+int execComm(struct bgProcess**, struct userCommand*, int*, int*);
+void checkBgTerm(struct bgProcess**);
 void signalShell(void);
-bool global_Background;
-int lastTerminate;
+bool global_Background_On;
 
 int main(void) {
 
-    //initialize exitStatus, userInput, and command struct pointer
+    //initialize shell signals, exitStatus, userInput, and command struct pointer
     int exitStatus = 0;
     int lastTerminate = -1;
-    struct bgProcess* bgProcessHead = NULL; //malloc(sizeof(struct bgProcess));
+    struct bgProcess* bgProcessHead = NULL;
     bool firstProcess = false;  // tracks whether first foreground process other than built-ins has run yet
     signalShell();
-    global_Background = true;
+    global_Background_On = true;
 
     while(1) {
         //Check if any background processes have terminated
         if (bgProcessHead != NULL) {
-            checkBgTerm(&bgProcessHead, &exitStatus);
+            checkBgTerm(&bgProcessHead);
         }
 
         //Prompt User for command
@@ -86,13 +85,25 @@ int main(void) {
             modToken = dollarSign(token);
             switch(modToken[0]) {
                 case input :
-                    currCommand->fileinput = calloc(strlen(modToken)+1, sizeof(char));
-                    modToken++;
+                    if (strlen(modToken) == 1) {
+                        token = strtok_r(NULL," \n\r",&userInput);
+                        modToken = dollarSign(token);
+                        currCommand->fileinput = calloc(strlen(modToken)+1, sizeof(char));
+                    } else {
+                        currCommand->fileinput = calloc(strlen(modToken)+1, sizeof(char));
+                        modToken++;
+                    }
                     strcpy(currCommand->fileinput, modToken);
                     break;
                 case output :
-                    currCommand->fileoutput = calloc(strlen(modToken)+1, sizeof(char));
-                    modToken++;
+                    if (strlen(modToken) == 1) {
+                        token = strtok_r(NULL," \n\r",&userInput);
+                        modToken = dollarSign(token);
+                        currCommand->fileoutput = calloc(strlen(modToken)+1, sizeof(char));
+                    } else {
+                        currCommand->fileoutput = calloc(strlen(modToken)+1, sizeof(char));
+                        modToken++;
+                    }
                     strcpy(currCommand->fileoutput, modToken);
                     break;
                 case background :
@@ -114,12 +125,12 @@ int main(void) {
         currCommand->args[argCounter] = NULL;
 
         // set foreground/background status based on global variable
-        if (currCommand->fg == true && global_Background == false) {
-            currCommand->fg = false;
+        if (currCommand->fg == false && global_Background_On == false) {
+            currCommand->fg = true;
         }
 
         // for testing purposes only
-        printf("Command: %s \nfileInput: %s \nfileOutput: %s \nbackground: %d\n", currCommand->command, currCommand->fileoutput, currCommand->fileinput, currCommand->fg);
+        printf("\n\nCommand: %s \nfileInput: %s \nfileOutput: %s \nbackground: %d\n\n", currCommand->command, currCommand->fileoutput, currCommand->fileinput, currCommand->fg);
         int counter = 0;
         while(currCommand->args[counter] != NULL) {
             printf("arg: %s\n", currCommand->args[counter]);
@@ -133,12 +144,12 @@ int main(void) {
             free(currCommand);
             exit(exitStatus);
         } else if (strcmp(currCommand->command, CDPRESET) == 0) {
-            cdPreSet(currCommand->args, currCommand->argcounter);
+            cdPreSet(currCommand->args, currCommand->argcounter, &exitStatus);
         } else if (strcmp(currCommand->command, STATUSPRESET) == 0) {
             statusPreSet(firstProcess, exitStatus, lastTerminate);
         } else {
             // create new process in exec, and check if this is first foreground process
-            int fgCheck = execComm(&bgProcessHead, currCommand, &exitStatus);
+            int fgCheck = execComm(&bgProcessHead, currCommand, &exitStatus, &lastTerminate);
             if (firstProcess == false && currCommand->fg && fgCheck != -1) {
                 firstProcess = true;
             }

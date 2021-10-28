@@ -9,7 +9,7 @@
 #include "UserCommand.h"
 
 void statusPreSet(bool firstProcess, int exitStatus, int lastTerminate) {
-    if (!firstProcess) {
+    if (!firstProcess || lastTerminate == -1) {
         printf("Exit Status %d\n", exitStatus);
     } else {
         printf("Terminated by Signal %d\n", lastTerminate);
