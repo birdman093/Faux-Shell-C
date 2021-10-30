@@ -130,12 +130,12 @@ int main(void) {
         }
 
         // for testing purposes only
-        printf("\n\nCommand: %s \nfileInput: %s \nfileOutput: %s \nbackground: %d\n\n", currCommand->command, currCommand->fileoutput, currCommand->fileinput, currCommand->fg);
-        int counter = 0;
-        while(currCommand->args[counter] != NULL) {
-            printf("arg: %s\n", currCommand->args[counter]);
-            counter++;
-        }
+        //printf("\n\nCommand: %s \nfileInput: %s \nfileOutput: %s \nbackground: %d\n\n", currCommand->command, currCommand->fileoutput, currCommand->fileinput, currCommand->fg);
+        //int counter = 0;
+        //while(currCommand->args[counter] != NULL) {
+        //    printf("arg: %s\n", currCommand->args[counter]);
+        //    counter++;
+        //}
 
         //Direct Pre-Set and Non Pre-Set Commands to functions
         if (strcmp(currCommand->command, EXITPRESET) == 0) {    

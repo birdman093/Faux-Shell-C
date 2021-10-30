@@ -1,5 +1,6 @@
 Russell Feathers
 HW Due Date: 11/01/21
+CS344: Operating Systems
 HW3--SmallSSH
 
 ---------How to Run?------------
@@ -66,13 +67,15 @@ CheckBgTerm prints to terminal the name of the process and the id
 
 --------
 SignalShell.c
-void handle_SIGTSTP_shell(int signo);
+void handle_SIGTSTP_shell(int signo); function creates handler for shell that enables/ disables foreground mode after a SIGTSTP signal
 
-void signalShell(void);
+void signalShell(void); function sets the actions for the SIGINT and SIGTSTP signals.  Shell ignores SIGINT and "handles" SIGTSTP
 
-void signal_SIGINT_fg_update(void);
+void signal_SIGINT_fg_update(void); function sets foreground commands response to signals.  For SIGINT to be the default action 
+(i.e. kill process) and to ignore SIGTSTP.
 
-void signal_SIGINT_bg_update(void);
+void signal_SIGINT_bg_update(void); function sets background commands response to signals.  For SIGINT and SIGTSTP the commands will 
+ignore the signals.
 
 ---------
 UserCommand.h

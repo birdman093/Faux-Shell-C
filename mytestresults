@@ -1,0 +1,382 @@
+PRE-SCRIPT INFO
+  Grading Script PID: 292840
+  Note: your smallsh will report a different PID when evaluating $$
+BEGINNING TEST SCRIPT
+
+--------------------
+Using comment (5 points if only next prompt is displayed next)
+
+
+--------------------
+ls (10 points for returning dir contents)
+BGProcesses.h
+build
+ChangeDirectory.c
+ChangeDirectory.o
+CheckBgTerm.c
+CheckBgTerm.o
+DollarSign.c
+DollarSign.o
+ExecComm.c
+ExecComm.o
+Exit.c
+Exit.o
+junk
+junk2
+Main.c
+Main.o
+Makefile
+mytestresults
+p3testscript
+README.txt
+Redirection.c
+Redirection.o
+SignalShell.c
+SignalShell.o
+smallsh
+smallssh
+Status.c
+Status.o
+UserCommand.h
+
+
+--------------------
+ls out junk
+
+
+--------------------
+cat junk (15 points for correctly returning contents of junk)
+BGProcesses.h
+build
+ChangeDirectory.c
+ChangeDirectory.o
+CheckBgTerm.c
+CheckBgTerm.o
+DollarSign.c
+DollarSign.o
+ExecComm.c
+ExecComm.o
+Exit.c
+Exit.o
+junk
+junk2
+Main.c
+Main.o
+Makefile
+mytestresults
+p3testscript
+README.txt
+Redirection.c
+Redirection.o
+SignalShell.c
+SignalShell.o
+smallsh
+smallssh
+Status.c
+Status.o
+UserCommand.h
+
+
+--------------------
+wc in junk (15 points for returning correct numbers from wc)
+ 29  29 323
+
+
+--------------------
+wc in junk out junk2; cat junk2 (10 points for returning correct numbers from wc)
+ 29  29 323
+
+
+--------------------
+
+
+--------------------
+wc in badfile (10 points for returning text error)
+
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: Background pid is 292878
+
+: background pid 292878 is done: exit value 0
+
+: Exit Status 1
+
+: 
+: 
+: 
+: 
+: 
+
+--------------------
+badfile (10 points for returning text error)
+
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: Background pid is 292878
+
+: background pid 292878 is done: exit value 0
+
+: Exit Status 1
+
+: 
+: 
+: 
+: 
+: Error Opening Input File, badfile, for Input Redirection
+: 
+: 
+: 
+: 
+: 
+
+--------------------
+sleep 100 background (10 points for returning process ID of sleeper)
+
+
+--------------------
+pkill -signal SIGTERM sleep (10 points for pid of killed process, 10 points for signal)
+(Ignore message about Operation Not Permitted)
+pkill: killing pid 4665 failed: Operation not permitted
+pkill: killing pid 17444 failed: Operation not permitted
+pkill: killing pid 22233 failed: Operation not permitted
+pkill: killing pid 45875 failed: Operation not permitted
+pkill: killing pid 269753 failed: Operation not permitted
+pkill: killing pid 285387 failed: Operation not permitted
+pkill: killing pid 285962 failed: Operation not permitted
+pkill: killing pid 288572 failed: Operation not permitted
+pkill: killing pid 288743 failed: Operation not permitted
+pkill: killing pid 288751 failed: Operation not permitted
+pkill: killing pid 289072 failed: Operation not permitted
+pkill: killing pid 289344 failed: Operation not permitted
+pkill: killing pid 289430 failed: Operation not permitted
+pkill: killing pid 289922 failed: Operation not permitted
+pkill: killing pid 290204 failed: Operation not permitted
+pkill: killing pid 290435 failed: Operation not permitted
+pkill: killing pid 290488 failed: Operation not permitted
+pkill: killing pid 290627 failed: Operation not permitted
+pkill: killing pid 291033 failed: Operation not permitted
+pkill: killing pid 291093 failed: Operation not permitted
+pkill: killing pid 291462 failed: Operation not permitted
+pkill: killing pid 291785 failed: Operation not permitted
+pkill: killing pid 291858 failed: Operation not permitted
+pkill: killing pid 291904 failed: Operation not permitted
+pkill: killing pid 291977 failed: Operation not permitted
+pkill: killing pid 292034 failed: Operation not permitted
+pkill: killing pid 292135 failed: Operation not permitted
+pkill: killing pid 292262 failed: Operation not permitted
+pkill: killing pid 292524 failed: Operation not permitted
+pkill: killing pid 292694 failed: Operation not permitted
+pkill: killing pid 292717 failed: Operation not permitted
+pkill: killing pid 292783 failed: Operation not permitted
+pkill: killing pid 292834 failed: Operation not permitted
+
+
+--------------------
+sleep 1 background (10 pts for pid of bg ps when done, 10 for exit value)
+
+
+--------------------
+pwd
+/nfs/stak/users/featheru/CS344/HW3
+
+
+--------------------
+cd
+
+
+--------------------
+pwd (10 points for being in the HOME dir)
+/nfs/stak/users/featheru
+
+
+--------------------
+mkdir testdir292841
+
+
+--------------------
+cd testdir292841
+
+
+--------------------
+pwd (5 points for being in the newly created dir)
+/nfs/stak/users/featheru/testdir292841
+--------------------
+Entering foreground-only mode (& is now ignored)Fri Oct 29 18:13:38 PDT 2021
+Fri Oct 29 18:13:43 PDT 2021
+Exiting foreground-only mode
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: Background pid is 292878
+
+: background pid 292878 is done: exit value 0
+
+: Exit Status 1
+
+: 
+: 
+: 
+: 
+: Error Opening Input File, badfile, for Input Redirection
+: 
+: 
+: 
+: 
+: badfile, is an Invalid File/ Command
+
+: 
+: 
+: 
+: 
+: Background pid is 292894
+
+: 
+: 
+: 
+: 
+: 
+: background pid 292894 is done: terminated by signal 15
+
+: 
+: 
+: 
+: 
+: Background pid is 292906
+
+: background pid 292906 is done: exit value 0
+
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: Background pid is 292965
+
+: background pid 292965 is done: exit value 0
+
+: 
+: 
+: 
+: 
+: 

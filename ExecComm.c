@@ -105,7 +105,7 @@ int execComm(struct bgProcess** bgProcessHead, struct userCommand* currCommand, 
                     return -1;
                 }
                 else {
-                    printf("TESTINGONLY: Valid Command, %d\n", childResponse);
+                    //printf("TESTINGONLY: Valid Command, %d\n", childResponse);
                     *exitStatus = 0;
                     return 1;
                 }
