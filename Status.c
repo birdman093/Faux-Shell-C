@@ -9,6 +9,7 @@
 #include "UserCommand.h"
 
 void statusPreSet(bool firstProcess, int exitStatus, int lastTerminate) {
+    // if first foreground process has not run or last process was not terminated by signal then return exit status
     if (!firstProcess || lastTerminate == -1) {
         printf("Exit Status %d\n", exitStatus);
     } else {

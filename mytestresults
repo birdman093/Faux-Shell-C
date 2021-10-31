@@ -1,5 +1,5 @@
 PRE-SCRIPT INFO
-  Grading Script PID: 292840
+  Grading Script PID: 92175
   Note: your smallsh will report a different PID when evaluating $$
 BEGINNING TEST SCRIPT
 
@@ -88,6 +88,7 @@ wc in junk out junk2; cat junk2 (10 points for returning correct numbers from wc
 
 
 --------------------
+test -f badfile (10 points for returning error value of 1, note extraneous &)
 
 
 --------------------
@@ -127,10 +128,8 @@ wc in badfile (10 points for returning text error)
 : 
 : 
 : 
-: Background pid is 292878
-
-: background pid 292878 is done: exit value 0
-
+: 
+: 
 : Exit Status 1
 
 : 
@@ -176,10 +175,8 @@ badfile (10 points for returning text error)
 : 
 : 
 : 
-: Background pid is 292878
-
-: background pid 292878 is done: exit value 0
-
+: 
+: 
 : Exit Status 1
 
 : 
@@ -200,39 +197,53 @@ sleep 100 background (10 points for returning process ID of sleeper)
 --------------------
 pkill -signal SIGTERM sleep (10 points for pid of killed process, 10 points for signal)
 (Ignore message about Operation Not Permitted)
-pkill: killing pid 4665 failed: Operation not permitted
-pkill: killing pid 17444 failed: Operation not permitted
-pkill: killing pid 22233 failed: Operation not permitted
+pkill: killing pid 34395 failed: Operation not permitted
+pkill: killing pid 34596 failed: Operation not permitted
+pkill: killing pid 34915 failed: Operation not permitted
+pkill: killing pid 35857 failed: Operation not permitted
+pkill: killing pid 35909 failed: Operation not permitted
+pkill: killing pid 35997 failed: Operation not permitted
+pkill: killing pid 35998 failed: Operation not permitted
+pkill: killing pid 35999 failed: Operation not permitted
+pkill: killing pid 36000 failed: Operation not permitted
+pkill: killing pid 36135 failed: Operation not permitted
+pkill: killing pid 36943 failed: Operation not permitted
+pkill: killing pid 36946 failed: Operation not permitted
+pkill: killing pid 37006 failed: Operation not permitted
+pkill: killing pid 37023 failed: Operation not permitted
+pkill: killing pid 38887 failed: Operation not permitted
+pkill: killing pid 40259 failed: Operation not permitted
+pkill: killing pid 42856 failed: Operation not permitted
 pkill: killing pid 45875 failed: Operation not permitted
+pkill: killing pid 47126 failed: Operation not permitted
+pkill: killing pid 48006 failed: Operation not permitted
+pkill: killing pid 74945 failed: Operation not permitted
+pkill: killing pid 76733 failed: Operation not permitted
+pkill: killing pid 77614 failed: Operation not permitted
+pkill: killing pid 77729 failed: Operation not permitted
+pkill: killing pid 77944 failed: Operation not permitted
+pkill: killing pid 79058 failed: Operation not permitted
+pkill: killing pid 79296 failed: Operation not permitted
+pkill: killing pid 81232 failed: Operation not permitted
+pkill: killing pid 81856 failed: Operation not permitted
+pkill: killing pid 81986 failed: Operation not permitted
+pkill: killing pid 83669 failed: Operation not permitted
+pkill: killing pid 84813 failed: Operation not permitted
+pkill: killing pid 85850 failed: Operation not permitted
+pkill: killing pid 86467 failed: Operation not permitted
+pkill: killing pid 87002 failed: Operation not permitted
+pkill: killing pid 90777 failed: Operation not permitted
+pkill: killing pid 91108 failed: Operation not permitted
+pkill: killing pid 101864 failed: Operation not permitted
+pkill: killing pid 115499 failed: Operation not permitted
+pkill: killing pid 212499 failed: Operation not permitted
+pkill: killing pid 252615 failed: Operation not permitted
+pkill: killing pid 253364 failed: Operation not permitted
+pkill: killing pid 263556 failed: Operation not permitted
 pkill: killing pid 269753 failed: Operation not permitted
-pkill: killing pid 285387 failed: Operation not permitted
-pkill: killing pid 285962 failed: Operation not permitted
-pkill: killing pid 288572 failed: Operation not permitted
-pkill: killing pid 288743 failed: Operation not permitted
-pkill: killing pid 288751 failed: Operation not permitted
-pkill: killing pid 289072 failed: Operation not permitted
-pkill: killing pid 289344 failed: Operation not permitted
-pkill: killing pid 289430 failed: Operation not permitted
-pkill: killing pid 289922 failed: Operation not permitted
-pkill: killing pid 290204 failed: Operation not permitted
-pkill: killing pid 290435 failed: Operation not permitted
-pkill: killing pid 290488 failed: Operation not permitted
-pkill: killing pid 290627 failed: Operation not permitted
-pkill: killing pid 291033 failed: Operation not permitted
-pkill: killing pid 291093 failed: Operation not permitted
-pkill: killing pid 291462 failed: Operation not permitted
-pkill: killing pid 291785 failed: Operation not permitted
-pkill: killing pid 291858 failed: Operation not permitted
-pkill: killing pid 291904 failed: Operation not permitted
-pkill: killing pid 291977 failed: Operation not permitted
-pkill: killing pid 292034 failed: Operation not permitted
-pkill: killing pid 292135 failed: Operation not permitted
-pkill: killing pid 292262 failed: Operation not permitted
-pkill: killing pid 292524 failed: Operation not permitted
-pkill: killing pid 292694 failed: Operation not permitted
-pkill: killing pid 292717 failed: Operation not permitted
-pkill: killing pid 292783 failed: Operation not permitted
-pkill: killing pid 292834 failed: Operation not permitted
+pkill: killing pid 272388 failed: Operation not permitted
+pkill: killing pid 273117 failed: Operation not permitted
+pkill: killing pid 325349 failed: Operation not permitted
 
 
 --------------------
@@ -254,19 +265,19 @@ pwd (10 points for being in the HOME dir)
 
 
 --------------------
-mkdir testdir292841
+mkdir testdir92177
 
 
 --------------------
-cd testdir292841
+cd testdir92177
 
 
 --------------------
 pwd (5 points for being in the newly created dir)
-/nfs/stak/users/featheru/testdir292841
+/nfs/stak/users/featheru/testdir92177
 --------------------
-Entering foreground-only mode (& is now ignored)Fri Oct 29 18:13:38 PDT 2021
-Fri Oct 29 18:13:43 PDT 2021
+Entering foreground-only mode (& is now ignored)Sun Oct 31 13:49:35 PDT 2021
+Sun Oct 31 13:49:40 PDT 2021
 Exiting foreground-only mode
 : 
 : 
@@ -302,10 +313,8 @@ Exiting foreground-only mode
 : 
 : 
 : 
-: Background pid is 292878
-
-: background pid 292878 is done: exit value 0
-
+: 
+: 
 : Exit Status 1
 
 : 
@@ -323,57 +332,57 @@ Exiting foreground-only mode
 : 
 : 
 : 
-: Background pid is 292894
+: Background pid is 92252
 
 : 
 : 
 : 
 : 
 : 
-: background pid 292894 is done: terminated by signal 15
+: background pid 92252 is done: terminated by signal 15
 
 : 
 : 
 : 
 : 
-: Background pid is 292906
-
-: background pid 292906 is done: exit value 0
+: Background pid is 92310
 
 : 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: 
-: Background pid is 292965
+: background pid 92310 is done: exit value 0
 
-: background pid 292965 is done: exit value 0
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: 
+: Background pid is 92802
+
+: background pid 92802 is done: exit value 0
 
 : 
 : 

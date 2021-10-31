@@ -33,7 +33,9 @@ bool global_Background_On;
 
 int main(void) {
 
-    //initialize shell signals, exitStatus, userInput, and command struct pointer
+    //initialize shell signals to ignore SIGINT and to handle SIGTSTP 
+    // set exitStatus to 0, firstForegroundProcess to false, and initialize 
+    // background process linked list to be empty
     int exitStatus = 0;
     int lastTerminate = -1;
     struct bgProcess* bgProcessHead = NULL;
@@ -42,12 +44,12 @@ int main(void) {
     global_Background_On = true;
 
     while(1) {
-        //Check if any background processes have terminated
+        //Check if any background processes have terminated, if yes then display pid and status
         if (bgProcessHead != NULL) {
             checkBgTerm(&bgProcessHead);
         }
 
-        //Prompt User for command
+        //Prompt User for command, allocate space for input, and take input
         char* userInput = calloc(MAXINPUTCOMM, sizeof(char));
         printf("\n: ");
         fgets(userInput, MAXINPUTCOMM, stdin);
@@ -61,6 +63,7 @@ int main(void) {
         if (hashtag == firstChar) {
             continue;
         }
+
         // allocate and initialize command for userCommand struct, modify command based on $$ expansion
         struct userCommand* currCommand = malloc(sizeof(struct userCommand));  ;
         char* modToken = dollarSign(token);
@@ -72,19 +75,20 @@ int main(void) {
         currCommand->args[0] = calloc(strlen(modToken)+1, sizeof(char));
         strcpy(currCommand->args[0], modToken);
 
-        // initialize rest of command
+        // initialize rest of command components
         currCommand->argcounter = 1;
         currCommand->fileinput = NULL;
         currCommand->fileoutput = NULL;
         currCommand->fg = true;
 
-        // iterate through each item based on spaces, and place into command struct
+        // iterate through each command component based on spaces, and place into command struct
         int argCounter = 1;
         token = strtok_r(NULL," \n\r",&userInput);
         while (token != NULL) {
             modToken = dollarSign(token);
             switch(modToken[0]) {
                 case input :
+                    // input can either have redirection immediately after < or with a space so check first
                     if (strlen(modToken) == 1) {
                         token = strtok_r(NULL," \n\r",&userInput);
                         modToken = dollarSign(token);
@@ -96,6 +100,7 @@ int main(void) {
                     strcpy(currCommand->fileinput, modToken);
                     break;
                 case output :
+                    // input can either have redirection immediately after < or with a space so check first
                     if (strlen(modToken) == 1) {
                         token = strtok_r(NULL," \n\r",&userInput);
                         modToken = dollarSign(token);
@@ -107,9 +112,18 @@ int main(void) {
                     strcpy(currCommand->fileoutput, modToken);
                     break;
                 case background :
-                    currCommand->fg = false;
-                    break;
+                    if (strlen(modToken) == 1) {
+                        currCommand->fg = false;
+                    } else {
+                        // if background command is longer than 1 then this is an argument command
+                        currCommand->args[argCounter] = calloc(strlen(modToken)+1, sizeof(char));
+                        strcpy(currCommand->args[argCounter], modToken);
+                        currCommand->argcounter ++;
+                        argCounter++;
+                    }
+                    break;  
                 default :
+                    // argumment component
                     currCommand->args[argCounter] = calloc(strlen(modToken)+1, sizeof(char));
                     strcpy(currCommand->args[argCounter], modToken);
                     currCommand->argcounter ++;
@@ -124,7 +138,7 @@ int main(void) {
         }
         currCommand->args[argCounter] = NULL;
 
-        // set foreground/background status based on global variable
+        // set foreground/background status based on global variable, global_Background_On
         if (currCommand->fg == false && global_Background_On == false) {
             currCommand->fg = true;
         }
@@ -140,7 +154,6 @@ int main(void) {
         //Direct Pre-Set and Non Pre-Set Commands to functions
         if (strcmp(currCommand->command, EXITPRESET) == 0) {    
             exitPreSet(bgProcessHead);
-            free(bgProcessHead);
             free(currCommand);
             exit(exitStatus);
         } else if (strcmp(currCommand->command, CDPRESET) == 0) {
@@ -155,7 +168,6 @@ int main(void) {
             }
         }
         
-        // Q: do we need to free each item in struct???
         free(currCommand); 
     }
 }

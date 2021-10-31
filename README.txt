@@ -24,7 +24,8 @@ double $$ entries with the processID and returns an updated string pointer
 --------
 Exit.c
 void exitPreSet(struct bgProcess *head); Exit function calls kill function to kill all
-processes in the bgProcess struct.  Exit returns and main kills the program 
+processes in the bgProcess struct, and frees each struct from memory.  Exit returns and 
+main kills the program 
 
 --------
 ChangeDirectory.c
@@ -34,9 +35,9 @@ argument. Then function uses chdir to change the working directory if valid.
 
 --------
 Status.c
-void statusPreSet(bool firstProcess, int exitStatus, int lastTerminate); returns the status
-of the program if no foreground process (other than preset commans) has been run and returns
-the last signal number of the terminating signal for a foreground process otherwise
+void statusPreSet(bool firstProcess, int exitStatus, int lastTerminate); returns either the status 
+or last terminating signal depending on the last command. if no foreground process (other than preset 
+commans) has been run it returns the exit status. 
 
 --------
 ExecComm.c
@@ -63,7 +64,8 @@ and displays to terminal specific error messages.
 CheckBgTerm.c
 void checkBgTerm(struct bgProcess* bgProcessHead, int* exitStatus); function checks whether any background
 processes have terminated by iterating through linked list.  If any background processes have terminated then
-CheckBgTerm prints to terminal the name of the process and the id
+CheckBgTerm prints to terminal the name of the process and the id.  Bg process frees memory from each item of linked
+list when the item has finished. 
 
 --------
 SignalShell.c
@@ -79,10 +81,10 @@ ignore the signals.
 
 ---------
 UserCommand.h
-struct: userCommand; which contains char* command, char** args, char* fileinput,
+struct: userCommand; contains char* command, char** args, char* fileinput,
 char* fileoutput, _Bool fg;
 
 ---------
 BGProcesses.h
-struct bgProcess contains processID, parent processID, and the next item in the linked list of processes. bgProcess holds
+struct: bgProcess; contains processID, parent processID, and the next item in the linked list of processes. bgProcess holds
 all the running background processes. 

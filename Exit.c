@@ -13,12 +13,15 @@
 void exitPreSet(struct bgProcess *head) {
     if (head != NULL) {
         struct bgProcess* currProcess = head;
+        struct bgProcess* tmp;
         while(currProcess != NULL) {
-            //kill each process with SIGKILL (9)!!!
+            //kill each process with SIGKILL (9)!!! and then free the memory in pgProcess
             if (kill(currProcess->processID, 9) == -1) {
                 printf("%d did not close correctly",currProcess->processID);
             }
+            tmp = currProcess;
             currProcess = currProcess->next;
+            free(tmp);
         }
     }
 }

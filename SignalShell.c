@@ -16,6 +16,7 @@ sigset_t shell_Signal_Set;
 bool global_Background_On;
 
 void handle_SIGTSTP_shell(int signo) {
+    // handler for shell signals
     global_Background_On = !global_Background_On;
     if (!global_Background_On) {
         char* message = "Entering foreground-only mode (& is now ignored)";
@@ -27,6 +28,7 @@ void handle_SIGTSTP_shell(int signo) {
 }
 
 void signalShell(void) {
+    // set signals for shell to ignore SIGINT, and handle SIGTSTP
     sigemptyset(&shell_Signal_Set);
     sigaddset(&shell_Signal_Set, SIGINT);
     sigaddset(&shell_Signal_Set, SIGTSTP);
@@ -46,6 +48,7 @@ void signalShell(void) {
 }
 
 void signal_SIGINT_fg_update(void) {
+    // update actions for foreground processes to default for SIGINT and ignore for SIGTSTP
     struct sigaction fgSIGINT;
     fgSIGINT.sa_handler = SIG_DFL;
     sigfillset(&fgSIGINT.sa_mask);
@@ -64,6 +67,7 @@ void signal_SIGINT_fg_update(void) {
 }
 
 void signal_SIGINT_bg_update(void) {
+    // update actions for background processes to ignore SIGTSTP
     struct sigaction bgSIGTSTP;
     bgSIGTSTP.sa_handler = SIG_IGN;
     sigfillset(&bgSIGTSTP.sa_mask);
