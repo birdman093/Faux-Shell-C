@@ -19,10 +19,10 @@ void handle_SIGTSTP_shell(int signo) {
     // handler for shell signals
     global_Background_On = !global_Background_On;
     if (!global_Background_On) {
-        char* message = "Entering foreground-only mode (& is now ignored)";
+        char* message = "Entering foreground-only mode (& is now ignored)\n";
         write(STDOUT_FILENO, message, 48);
     } else {
-        char* message = "Exiting foreground-only mode";
+        char* message = "Exiting foreground-only mode\n";
         write(STDOUT_FILENO, message, 28);
     }
 }
